@@ -36,6 +36,16 @@ components:
       size: 2Gi
 
 commands:
+  - id: install-extensions
+    exec:
+      component: ansible-tools
+      commandLine: |
+        for ext in redhat.ansible redhat.vscode-yaml dracula-theme.theme-dracula; do
+          code --install-extension "$ext" --force 2>/dev/null || \
+          open-vsx install "$ext" 2>/dev/null || true
+        done
+      workingDir: ${PROJECT_SOURCE}
+      label: "Install VS Code Extensions"
   - id: setup-ansible
     exec:
       component: ansible-tools
@@ -68,4 +78,5 @@ commands:
 
 events:
   postStart:
+    - install-extensions
     - setup-ansible

@@ -1,5 +1,6 @@
 {
   "workbench.colorTheme": "Dracula",
+  "python.useEnvironmentsExtension": false,
   "ansible.python.interpreterPath": "/usr/bin/python3",
   "ansible.validation.lint.enabled": true,
   "ansible.validation.enabled": true,

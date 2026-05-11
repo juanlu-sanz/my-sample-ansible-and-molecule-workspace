@@ -39,21 +39,17 @@ commands:
   - id: configure-editor
     exec:
       component: ansible-tools
-      commandLine: |
+      commandLine: >
+        SETTINGS='{"workbench.colorTheme":"Dracula","python.useEnvironmentsExtension":false,"python.defaultInterpreterPath":"/usr/bin/python3","ansible.python.interpreterPath":"/usr/bin/python3","ansible.validation.lint.enabled":true,"ansible.validation.enabled":true}';
+        for dir in
+        "${HOME}/.config/Code/User"
+        "/checode/checode-linux-libc/User"
+        "${HOME}/.code/User"
+        "${HOME}/.local/share/code-server/User"; do
+        mkdir -p "$dir" 2>/dev/null && echo "$SETTINGS" > "$dir/settings.json" 2>/dev/null; done;
+        sleep 5;
         for ext in redhat.ansible redhat.vscode-yaml dracula-theme.theme-dracula; do
-          code --install-extension "$ext" --force 2>/dev/null || true
-        done &&
-        USER_SETTINGS_DIR="${HOME}/.config/Code/User" &&
-        mkdir -p "${USER_SETTINGS_DIR}" &&
-        cat > "${USER_SETTINGS_DIR}/settings.json" << 'SETTINGS'
-        {
-          "workbench.colorTheme": "Dracula",
-          "python.useEnvironmentsExtension": false,
-          "ansible.python.interpreterPath": "/usr/bin/python3",
-          "ansible.validation.lint.enabled": true,
-          "ansible.validation.enabled": true
-        }
-        SETTINGS
+        code --install-extension "$ext" --force 2>/dev/null || true; done
       workingDir: ${PROJECT_SOURCE}
       label: "Configure Editor Extensions and Theme"
   - id: setup-ansible

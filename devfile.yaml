@@ -1,0 +1,71 @@
+schemaVersion: 2.2.0
+metadata:
+  name: my-ansible-workspace
+  version: 1.0.0
+  displayName: My Ansible Workspace
+  description: Pre-configured Ansible development environment with ansible-core 2.17, molecule, and linting tools
+  language: yaml
+  projectType: ansible
+attributes:
+  controller.devfile.io/storage-type: per-user
+
+components:
+  - name: ansible-tools
+    container:
+      image: registry.redhat.io/devspaces/udi-rhel9:3.27
+      memoryRequest: 1Gi
+      memoryLimit: 4Gi
+      cpuRequest: 500m
+      cpuLimit: 2000m
+      mountSources: true
+      env:
+        - name: ANSIBLE_COLLECTIONS_PATH
+          value: ${PROJECT_SOURCE}/.ansible/collections
+        - name: ANSIBLE_ROLES_PATH
+          value: ${PROJECT_SOURCE}/roles
+        - name: ANSIBLE_FORCE_COLOR
+          value: "true"
+        - name: PY_COLORS
+          value: "1"
+      volumeMounts:
+        - name: pip-cache
+          path: /home/user/.cache/pip
+
+  - name: pip-cache
+    volume:
+      size: 2Gi
+
+commands:
+  - id: setup-ansible
+    exec:
+      component: ansible-tools
+      commandLine: |
+        pip install --user \
+          "ansible-core>=2.17,<2.18" \
+          molecule \
+          "molecule-plugins[podman]" \
+          ansible-lint \
+          yamllint &&
+        if [ -f requirements.yml ]; then
+          ansible-galaxy collection install -r requirements.yml --force
+        fi &&
+        echo "✅ Ansible tools installed successfully" &&
+        ansible --version | head -1
+      workingDir: ${PROJECT_SOURCE}
+      label: "Install Ansible Tools"
+  - id: lint
+    exec:
+      component: ansible-tools
+      commandLine: ansible-lint .
+      workingDir: ${PROJECT_SOURCE}
+      label: "Run Ansible Lint"
+  - id: test
+    exec:
+      component: ansible-tools
+      commandLine: molecule test
+      workingDir: ${PROJECT_SOURCE}
+      label: "Run Molecule Test"
+
+events:
+  postStart:
+    - setup-ansible

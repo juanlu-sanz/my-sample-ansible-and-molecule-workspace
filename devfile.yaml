@@ -36,16 +36,26 @@ components:
       size: 2Gi
 
 commands:
-  - id: install-extensions
+  - id: configure-editor
     exec:
       component: ansible-tools
       commandLine: |
         for ext in redhat.ansible redhat.vscode-yaml dracula-theme.theme-dracula; do
-          code --install-extension "$ext" --force 2>/dev/null || \
-          open-vsx install "$ext" 2>/dev/null || true
-        done
+          code --install-extension "$ext" --force 2>/dev/null || true
+        done &&
+        USER_SETTINGS_DIR="${HOME}/.config/Code/User" &&
+        mkdir -p "${USER_SETTINGS_DIR}" &&
+        cat > "${USER_SETTINGS_DIR}/settings.json" << 'SETTINGS'
+        {
+          "workbench.colorTheme": "Dracula",
+          "python.useEnvironmentsExtension": false,
+          "ansible.python.interpreterPath": "/usr/bin/python3",
+          "ansible.validation.lint.enabled": true,
+          "ansible.validation.enabled": true
+        }
+        SETTINGS
       workingDir: ${PROJECT_SOURCE}
-      label: "Install VS Code Extensions"
+      label: "Configure Editor Extensions and Theme"
   - id: setup-ansible
     exec:
       component: ansible-tools
@@ -78,5 +88,5 @@ commands:
 
 events:
   postStart:
-    - install-extensions
+    - configure-editor
     - setup-ansible

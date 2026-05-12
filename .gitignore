@@ -1,4 +1,51 @@
+# Ansible
 .ansible/
-__pycache__/
-*.pyc
+*.retry
+*.log
+
+# Molecule
+.molecule/
 .cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+*.egg
+venv/
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Secrets (NEVER commit)
+*.vault
+*vault*.yml
+secrets/
+credentials/
+*.pem
+*.key
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+*.tar.gz
+
+# Temporary files
+tmp/
+temp/
+*.tmp

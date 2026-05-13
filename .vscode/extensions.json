@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "redhat.ansible",
-    "redhat.vscode-yaml",
-    "dracula-theme.theme-dracula"
+    "redhat.vscode-yaml"
   ]
 }

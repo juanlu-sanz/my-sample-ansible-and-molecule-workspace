@@ -3,7 +3,7 @@ metadata:
   name: my-ansible-workspace
   version: 1.0.0
   displayName: My Ansible Workspace
-  description: Pre-configured Ansible development environment with ansible-core 2.17, molecule, and linting tools
+  description: Pre-configured Ansible development environment with ansible-dev-tools, molecule, and linting tools
   language: yaml
   projectType: ansible
 attributes:
@@ -13,9 +13,7 @@ components:
   - name: ansible-tools
     container:
       image: registry.redhat.io/devspaces/udi-rhel9:3.27
-      memoryRequest: 1Gi
       memoryLimit: 4Gi
-      cpuRequest: 500m
       cpuLimit: 2000m
       mountSources: true
       env:
@@ -23,15 +21,27 @@ components:
           value: ${PROJECT_SOURCE}/.ansible/collections
         - name: ANSIBLE_ROLES_PATH
           value: ${PROJECT_SOURCE}/roles
+        - name: ANSIBLE_HOST_KEY_CHECKING
+          value: "false"
         - name: ANSIBLE_FORCE_COLOR
           value: "true"
         - name: PY_COLORS
           value: "1"
+        - name: MOLECULE_NO_LOG
+          value: "false"
+        - name: TERM
+          value: xterm-256color
       volumeMounts:
         - name: pip-cache
           path: /home/user/.cache/pip
+        - name: ansible-data
+          path: /home/user/.ansible
 
   - name: pip-cache
+    volume:
+      size: 2Gi
+
+  - name: ansible-data
     volume:
       size: 2Gi
 
@@ -41,16 +51,16 @@ commands:
       component: ansible-tools
       commandLine: |
         pip install --user \
-          "ansible-core>=2.17,<2.18" \
-          molecule \
+          ansible-dev-tools \
           "molecule-plugins[podman]" \
-          ansible-lint \
-          yamllint &&
+          pytest-testinfra \
+          jmespath \
+          netaddr &&
         if [ -f requirements.yml ]; then
           ansible-galaxy collection install -r requirements.yml --force
         fi &&
         echo "✅ Ansible tools installed successfully" &&
-        ansible --version | head -1
+        adt --version
       workingDir: ${PROJECT_SOURCE}
       label: "Install Ansible Tools"
   - id: lint

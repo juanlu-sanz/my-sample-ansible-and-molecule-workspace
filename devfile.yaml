@@ -14,7 +14,8 @@ components:
     container:
       image: registry.redhat.io/devspaces/udi-rhel9:3.27
       memoryLimit: 4Gi
-      cpuLimit: 2000m
+      cpuLimit: 1000m
+      cpuRequest: 500m
       mountSources: true
       env:
         - name: ANSIBLE_COLLECTIONS_PATH

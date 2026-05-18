@@ -1,0 +1,4 @@
+---
+collection_root: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | dirname }}"
+integration_tests_path: "{{ collection_root }}/tests/integration/targets/"
+test_name: "{{ molecule_scenario_name.replace('integration_', '') }}"

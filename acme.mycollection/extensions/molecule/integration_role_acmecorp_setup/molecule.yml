@@ -1,0 +1,21 @@
+---
+driver:
+  name: podman
+
+platforms:
+  - name: instance
+    image: registry.access.redhat.com/ubi9/ubi-init:latest
+    pre_build_image: true
+
+provisioner:
+  name: ansible
+  playbooks:
+    cleanup: ../utils/playbooks/noop.yml
+    converge: ../utils/playbooks/converge.yml
+    prepare: ../utils/playbooks/noop.yml
+  config_options:
+    defaults:
+      collections_path: ${ANSIBLE_COLLECTIONS_PATH}
+
+verifier:
+  name: ansible

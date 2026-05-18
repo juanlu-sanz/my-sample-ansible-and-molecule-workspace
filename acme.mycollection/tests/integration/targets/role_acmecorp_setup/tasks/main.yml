@@ -1,0 +1,65 @@
+---
+- name: Run role_acmecorp_setup role
+  ansible.builtin.include_role:
+    name: acme.mycollection.role_acmecorp_setup
+  vars:
+    role_acmecorp_setup_base: /tmp/acme-workspace
+    role_acmecorp_setup_dirs:
+      - projects
+      - logs
+      - configs
+    role_acmecorp_setup_config_file: settings.yml
+
+- name: Check base directory exists
+  ansible.builtin.stat:
+    path: /tmp/acme-workspace
+  register: base_dir
+
+- name: Assert base directory is a directory
+  ansible.builtin.assert:
+    that:
+      - base_dir.stat.exists
+      - base_dir.stat.isdir
+    fail_msg: "Base directory /tmp/acme-workspace was not created"
+
+- name: Check each subdirectory exists
+  ansible.builtin.stat:
+    path: "/tmp/acme-workspace/{{ item }}"
+  register: subdirs
+  loop:
+    - projects
+    - logs
+    - configs
+
+- name: Assert all subdirectories are directories
+  ansible.builtin.assert:
+    that:
+      - item.stat.exists
+      - item.stat.isdir
+    fail_msg: "Subdirectory {{ item.item }} was not created"
+  loop: "{{ subdirs.results }}"
+
+- name: Check configuration file exists
+  ansible.builtin.stat:
+    path: /tmp/acme-workspace/configs/settings.yml
+  register: config_file
+
+- name: Assert configuration file is a file
+  ansible.builtin.assert:
+    that:
+      - config_file.stat.exists
+      - config_file.stat.isreg
+    fail_msg: "Configuration file settings.yml was not created"
+
+- name: Read configuration file content
+  ansible.builtin.slurp:
+    src: /tmp/acme-workspace/configs/settings.yml
+  register: config_content
+
+- name: Assert configuration file contains expected content
+  ansible.builtin.assert:
+    that:
+      - "'created_by: Ansible' in (config_content.content | b64decode)"
+    fail_msg: >
+      Configuration file does not contain 'created_by: Ansible'.
+      Actual content: {{ config_content.content | b64decode }}

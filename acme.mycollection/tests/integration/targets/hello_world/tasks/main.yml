@@ -1,0 +1,10 @@
+---
+- name: Hello world test
+  ansible.builtin.debug:
+    msg: "Hello from integration test!"
+
+- name: Assert true is true
+  ansible.builtin.assert:
+    that:
+      - true
+    fail_msg: "This should never fail"

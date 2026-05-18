@@ -18,6 +18,7 @@ dependencies:
   "ansible.utils": "*"
   "ansible.posix": "*"
   "community.general": "*"
+  "containers.podman": "*"
 
 build_ignore:
   - .gitignore

@@ -1,0 +1,5 @@
+---
+collections:
+  - name: acme.mycollection
+    source: /projects/ansible-dev-tools-workspace/acme.mycollection
+    type: dir

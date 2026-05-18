@@ -1,0 +1,27 @@
+namespace: "acme"
+name: "mycollection"
+version: 1.0.0
+readme: README.md
+authors:
+  - ACME Corp <acme@example.com>
+
+description: Workshop collection for Ansible Development Tools
+
+license_file: LICENSE
+
+tags:
+  - linux
+  - tools
+  - workshop
+
+dependencies:
+  "ansible.utils": "*"
+  "ansible.posix": "*"
+  "community.general": "*"
+
+build_ignore:
+  - .gitignore
+  - changelogs/.plugin-cache.yaml
+  - .venv
+  - collections
+  - .tox

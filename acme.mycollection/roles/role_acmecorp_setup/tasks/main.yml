@@ -1,0 +1,26 @@
+---
+- name: Create workspace base directory
+  ansible.builtin.file:
+    path: "{{ role_acmecorp_setup_base }}"
+    state: directory
+    mode: "0755"
+
+- name: Create workspace subdirectories
+  ansible.builtin.file:
+    path: "{{ role_acmecorp_setup_base }}/{{ item }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ role_acmecorp_setup_dirs }}"
+
+- name: Create default configuration file
+  ansible.builtin.copy:
+    content: |
+      # Workspace configuration
+      role_acmecorp_setup_base: {{ role_acmecorp_setup_base }}
+      created_by: Ansible
+    dest: "{{ role_acmecorp_setup_base }}/configs/{{ role_acmecorp_setup_config_file }}"
+    mode: "0644"
+
+- name: Report workspace status
+  ansible.builtin.debug:
+    msg: "Acmespace ready at {{ role_acmecorp_setup_base }}"

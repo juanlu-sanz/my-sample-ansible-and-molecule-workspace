@@ -1,0 +1,7 @@
+---
+- name: Set up development workspace
+  hosts: all
+  become: false
+
+  roles:
+    - role: acme.mycollection.role_acmecorp_setup

@@ -1,0 +1,18 @@
+---
+version: 3
+
+images:
+  base_image:
+    name: registry.redhat.io/ansible-automation-platform-26/ee-minimal-rhel9:latest
+
+dependencies:
+  galaxy: requirements.yml
+  python: requirements.txt
+  system: bindep.txt
+
+additional_build_files:
+  - src: acme-mycollection-1.0.0.tar.gz
+    dest: collection_tarballs
+
+options:
+  package_manager_path: /usr/bin/microdnf

@@ -1,0 +1,12 @@
+---
+# Base directory where the workspace will be created
+role_acmecorp_setup_base: /tmp/acme-workspace
+
+# Subdirectories to create within the workspace
+role_acmecorp_setup_dirs:
+  - projects
+  - logs
+  - configs
+
+# Name of the configuration file to generate
+role_acmecorp_setup_config_file: settings.yml

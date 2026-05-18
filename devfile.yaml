@@ -53,6 +53,18 @@ components:
       size: 2Gi
 
 commands:
+  - id: setup-podman
+    exec:
+      component: ansible-tools
+      commandLine: |
+        unset CONTAINER_HOST &&
+        echo "=== Configuring Podman for local use ===" &&
+        mkdir -p /run/user/$(id -u)/podman &&
+        podman system service --time=0 unix:///run/user/$(id -u)/podman/podman.sock &
+        sleep 2 &&
+        podman info >/dev/null 2>&1 && echo "=== Podman service started ===" || echo "WARNING: Podman service failed to start"
+      label: "Start Podman Service"
+
   - id: setup-ansible
     exec:
       component: ansible-tools
@@ -66,7 +78,7 @@ commands:
         if [ -f requirements.yml ]; then
           ansible-galaxy collection install -r requirements.yml --force
         fi &&
-        echo "✅ Ansible tools installed successfully" &&
+        echo "Ansible tools installed successfully" &&
         adt --version
       workingDir: ${PROJECT_SOURCE}
       label: "Install Ansible Tools"
@@ -85,4 +97,5 @@ commands:
 
 events:
   postStart:
+    - setup-podman
     - setup-ansible

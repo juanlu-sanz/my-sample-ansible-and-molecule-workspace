@@ -7,17 +7,23 @@ metadata:
   language: yaml
   projectType: ansible
 attributes:
-  controller.devfile.io/storage-type: per-user
+  controller.devfile.io/storage-type: per-workspace
 
 components:
   - name: ansible-tools
+    attributes:
+      container-overrides:
+        securityContext:
+          privileged: true
     container:
-      image: registry.redhat.io/devspaces/udi-rhel9:3.27
+      image: ghcr.io/juanlu-sanz/nested-podman-devspaces:latest
       memoryLimit: 4Gi
       cpuLimit: 1000m
       cpuRequest: 500m
       mountSources: true
       env:
+        - name: CONTAINER_HOST
+          value: ""
         - name: ANSIBLE_COLLECTIONS_PATH
           value: ${PROJECT_SOURCE}/.ansible/collections
         - name: ANSIBLE_ROLES_PATH

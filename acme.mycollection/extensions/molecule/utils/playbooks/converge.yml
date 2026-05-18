@@ -2,12 +2,12 @@
 - name: Shared integration test runner
   hosts: all
   gather_facts: false
+  vars:
+    collection_root: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | dirname }}"
+    test_name: "{{ lookup('env', 'MOLECULE_SCENARIO_NAME') | replace('integration_', '') }}"
+    integration_tests_path: "{{ collection_root }}/tests/integration/targets/"
 
   tasks:
-    - name: Load the vars
-      ansible.builtin.include_vars:
-        file: ../../utils/vars/vars.yml
-
     - name: "Integration test: {{ test_name }}"
       ansible.builtin.include_role:
-        name: "{{ test_path }}"
+        name: "{{ integration_tests_path }}{{ test_name }}"

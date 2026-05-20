@@ -22,6 +22,8 @@ components:
       cpuRequest: 500m
       mountSources: true
       env:
+        - name: VSCODE_DEFAULT_WORKSPACE
+          value: /projects/my-sample-ansible-and-molecule-workspace/
         - name: CONTAINER_HOST
           value: ""
         - name: ANSIBLE_COLLECTIONS_PATH

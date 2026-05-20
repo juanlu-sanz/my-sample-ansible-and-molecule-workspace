@@ -24,8 +24,6 @@ components:
       env:
         - name: VSCODE_DEFAULT_WORKSPACE
           value: /projects/my-sample-ansible-and-molecule-workspace/
-        - name: CONTAINER_HOST
-          value: ""
         - name: ANSIBLE_COLLECTIONS_PATH
           value: ${PROJECT_SOURCE}/.ansible/collections
         - name: ANSIBLE_ROLES_PATH
@@ -59,12 +57,24 @@ commands:
     exec:
       component: ansible-tools
       commandLine: |
+        echo "=== Configuring Podman ===" &&
         unset CONTAINER_HOST &&
-        echo "=== Configuring Podman for local use ===" &&
         mkdir -p /run/user/$(id -u)/podman &&
-        podman system service --time=0 unix:///run/user/$(id -u)/podman/podman.sock &
+        nohup podman system service --time=0 unix:///run/user/$(id -u)/podman/podman.sock > /tmp/podman-service.log 2>&1 &
+        disown &&
         sleep 2 &&
-        podman info >/dev/null 2>&1 && echo "=== Podman service started ===" || echo "WARNING: Podman service failed to start"
+        cat >> ~/.bashrc << 'PODMAN_EOF'
+
+        # Ensure Podman service is running
+        unset CONTAINER_HOST
+        if ! podman info >/dev/null 2>&1; then
+          mkdir -p /run/user/$(id -u)/podman
+          nohup podman system service --time=0 unix:///run/user/$(id -u)/podman/podman.sock > /tmp/podman-service.log 2>&1 &
+          disown
+          sleep 1
+        fi
+        PODMAN_EOF
+        podman info >/dev/null 2>&1 && echo "=== Podman ready ===" || echo "WARNING: Podman failed to start"
       label: "Start Podman Service"
 
   - id: setup-ansible
